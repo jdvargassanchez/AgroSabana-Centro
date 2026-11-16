@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block page_title %}Analítica Histórica e Inteligencia de Negocios{% endblock %}
+{% block page_subtitle %}Exploración multidimensional de series climáticas y rendimiento hídrico en Sabana Centro{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="panel-title"><i class="fas fa-chart-bar"></i> Tablero Corporativo Power BI · Red AgroSabana</h3>
+        <span class="badge badge-optimo">Data Warehouse Conectado</span>
+    </div>
+    <p style="font-size:0.9rem; color:var(--ink-secondary); margin-bottom:18px;">
+        Este módulo conecta el repositorio histórico de telemetría de las 12 torres ubicadas en Sopó, Chía, Cajicá, Zipaquirá, Tocancipá, Gachancipá, Nemocón y Cogua, permitiendo segmentar el comportamiento térmico, la humedad del suelo y las alertas por cultivo y época del año.
+    </p>
+    <div style="position:relative; width:100%; height:640px; border-radius:10px; overflow:hidden; border:1px solid var(--border-light); background:var(--surface-subtle);">
+        <iframe title="AgroSabana_PowerBI"
+                src="https://app.powerbi.com/reportEmbed?reportId=0e613191-daa8-4a1a-88f5-da608b5e0e50&autoAuth=true&ctid=07da67a0-1f43-4e8c-977f-5f88b6470ee6"
+                style="width:100%; height:100%; border:none;"
+                allowFullScreen="true">
+        </iframe>
+    </div>
+</div>
+{% endblock %}

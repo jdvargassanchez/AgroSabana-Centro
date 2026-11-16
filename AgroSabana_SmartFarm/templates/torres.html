@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block page_title %}Red de Torres y Predios Agrícolas{% endblock %}
+{% block page_subtitle %}Georreferenciación de estaciones ESP32 asignadas a productores de la Sabana Centro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mun-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 22px;
+    }
+
+    .mun-btn {
+        background: var(--surface-card);
+        border: 1px solid var(--border-strong);
+        color: var(--ink-primary);
+        padding: 8px 15px;
+        border-radius: 999px;
+        font-family: inherit;
+        font-size: 0.84rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.18s ease;
+    }
+
+    .mun-btn:hover {
+        border-color: var(--emerald-600);
+        color: var(--emerald-600);
+    }
+
+    .mun-btn.active {
+        background: var(--forest-800);
+        border-color: var(--forest-800);
+        color: #ffffff;
+    }
+
+    .map-wrapper {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 26px;
+    }
+
+    #mapaSabana {
+        width: 100%;
+        height: 440px;
+        border-radius: var(--radius-sm);
+        z-index: 1;
+    }
+
+    .towers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        gap: 18px;
+    }
+
+    .tower-card {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-top: 4px solid var(--emerald-600);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        box-shadow: var(--shadow-xs);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tower-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .tower-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .tower-code {
+        font-size: 0.76rem;
+        font-weight: 800;
+        color: var(--emerald-600);
+        letter-spacing: 0.04em;
+    }
+
+    .tower-finca {
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--ink-primary);
+        margin-top: 2px;
+    }
+
+    .tower-specs {
+        list-style: none;
+        font-size: 0.84rem;
+        color: var(--ink-secondary);
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        border-top: 1px solid var(--surface-subtle);
+        padding-top: 12px;
+    }
+
+    .tower-specs li strong {
+        color: var(--ink-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mun-filter-bar" id="munFilters">
+    <button class="mun-btn active" data-mun="TODOS">Todos los Municipios ({{ torres|length }})</button>
+    <button class="mun-btn" data-mun="Sopó">Sopó</button>
+    <button class="mun-btn" data-mun="Chía">Chía</button>
+    <button class="mun-btn" data-mun="Cajicá">Cajicá</button>
+    <button class="mun-btn" data-mun="Zipaquirá">Zipaquirá</button>
+    <button class="mun-btn" data-mun="Tocancipá">Tocancipá</button>
+    <button class="mun-btn" data-mun="Gachancipá">Gachancipá</button>
+    <button class="mun-btn" data-mun="Nemocón">Nemocón</button>
+    <button class="mun-btn" data-mun="Cogua">Cogua</button>
+</div>
+
+<div class="map-wrapper">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+        <h3 class="panel-title"><i class="fas fa-map-marked-alt"></i> Mapa Interactivo de Interconexión Predial · Sabana Centro</h3>
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Haga clic en cada marcador para inspeccionar el predio y cultivo</span>
+    </div>
+    <div id="mapaSabana"></div>
+</div>
+
+<div class="towers-grid" id="towersGrid">
+    {% for t in torres %}
+    <article class="tower-card" data-mun="{{ t.municipio }}">
+        <div class="tower-head">
+            <div>
+                <div class="tower-code">{{ t.id }} · {{ t.municipio | upper }}</div>
+                <h4 class="tower-finca">{{ t.finca }}</h4>
+            </div>
+            <span class="badge badge-optimo"><i class="fas fa-circle" style="font-size:0.5rem;"></i> En Línea</span>
+        </div>
+        <ul class="tower-specs">
+            <li><i class="fas fa-user" style="width:18px; color:var(--emerald-600);"></i> <strong>Agricultor:</strong> {{ t.agricultor }}</li>
+            <li><i class="fas fa-map-pin" style="width:18px; color:var(--emerald-600);"></i> <strong>Ubicación:</strong> Vereda {{ t.vereda }} ({{ t.altitud }} m.s.n.m.)</li>
+            <li><i class="fas fa-seedling" style="width:18px; color:var(--emerald-600);"></i> <strong>Cultivo:</strong> {{ t.cultivo }} ({{ t.hectareas }} ha)</li>
+            <li><i class="fas fa-layer-group" style="width:18px; color:var(--emerald-600);"></i> <strong>Suelo y Etapa:</strong> {{ t.suelo }} · {{ t.etapa }}</li>
+            <li><i class="fas fa-solar-panel" style="width:18px; color:var(--emerald-600);"></i> <strong>Autonomía:</strong> {{ t.energia }}</li>
+            <li><i class="fas fa-compass" style="width:18px; color:var(--emerald-600);"></i> <strong>GPS:</strong> {{ "%.4f"|format(t.lat) }} N, {{ "%.4f"|format(t.lon) }} W</li>
+        </ul>
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const TORRES = {{ torres | tojson }};
+    const map = L.map('mapaSabana').setView([4.965, -73.955], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap · Red AgroSabana Centro',
+        maxZoom: 18
+    }).addTo(map);
+
+    const markers = [];
+    const latlngs = [];
+
+    TORRES.forEach(t => {
+        latlngs.push([t.lat, t.lon]);
+        const icon = L.divIcon({
+            className: 'agro-pin',
+            html: `<div style="background:#1b4332; width:18px; height:18px; border-radius:50%; border:3px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.45);"></div>`,
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+        });
+
+        const m = L.marker([t.lat, t.lon], { icon }).addTo(map)
+            .bindPopup(`
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; min-width:200px;">
+                    <strong style="color:#1b4332; font-size:13px;">${t.id}</strong><br>
+                    <b>${t.finca}</b> (${t.municipio})<br>
+                    <span style="font-size:12px; color:#42544b;">Productor: ${t.agricultor}</span><br>
+                    <span style="font-size:12px; color:#1e7e53;">Cultivo: ${t.cultivo}</span>
+                </div>
+            `);
+        m.municipio = t.municipio;
+        markers.push(m);
+    });
+
+    // Polígono / red de interconexión municipal Sabana Centro
+    L.polyline(latlngs, {
+        color: '#2a9d68',
+        weight: 2,
+        opacity: 0.45,
+        dashArray: '6, 8'
+    }).addTo(map);
+
+    document.querySelectorAll('#munFilters .mun-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#munFilters .mun-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const mun = btn.dataset.mun;
+
+            document.querySelectorAll('.tower-card').forEach(card => {
+                card.style.display = (mun === 'TODOS' || card.dataset.mun === mun) ? 'block' : 'none';
+            });
+
+            markers.forEach(m => {
+                if (mun === 'TODOS' || m.municipio === mun) {
+                    if (!map.hasLayer(m)) map.addLayer(m);
+                } else {
+                    if (map.hasLayer(m)) map.removeLayer(m);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

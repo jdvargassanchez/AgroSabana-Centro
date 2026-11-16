@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap');
+
+:root {
+    --forest-950: #0c1f17;
+    --forest-900: #132e22;
+    --forest-800: #1b4332;
+    --forest-700: #245741;
+    --emerald-600: #1e7e53;
+    --emerald-500: #2a9d68;
+    --emerald-100: #e3f4ec;
+    --ochre-600: #b45309;
+    --ochre-100: #fef3c7;
+    --sky-600: #0369a1;
+    --sky-100: #e0f2fe;
+    --crimson-600: #b91c1c;
+    --crimson-100: #fee2e2;
+
+    --bg-canvas: #f4f6f4;
+    --surface-card: #ffffff;
+    --surface-subtle: #eef2ef;
+    --border-light: #dce3dd;
+    --border-strong: #c2cec4;
+
+    --ink-primary: #14221b;
+    --ink-secondary: #42544b;
+    --ink-muted: #687a70;
+
+    --shadow-xs: 0 1px 2px rgba(20, 34, 27, 0.05);
+    --shadow-sm: 0 3px 10px rgba(20, 34, 27, 0.06);
+    --shadow-md: 0 10px 25px rgba(20, 34, 27, 0.08);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--ink-primary);
+    display: flex;
+    min-height: 100vh;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ================= SIDEBAR INSTITUCIONAL ================= */
+.sidebar {
+    width: 272px;
+    background: linear-gradient(180deg, var(--forest-950) 0%, var(--forest-900) 100%);
+    color: #f0f5f2;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.25s ease;
+}
+
+.brand-header {
+    padding: 24px 22px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7ee2b8;
+    background: rgba(42, 157, 104, 0.16);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+.brand-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.48rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-subtitle {
+    font-size: 0.8rem;
+    color: #9cb3a7;
+    margin-top: 4px;
+}
+
+.nav-section-label {
+    padding: 18px 22px 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #759183;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 14px;
+    flex-grow: 1;
+}
+
+.sidebar-nav a {
+    text-decoration: none;
+    color: #d2e0d8;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.sidebar-nav a i {
+    width: 18px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #88a898;
+    transition: color 0.18s ease;
+}
+
+.sidebar-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+}
+
+.sidebar-nav a:hover i {
+    color: #7ee2b8;
+}
+
+.sidebar-nav a.active {
+    background-color: var(--emerald-600);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.sidebar-nav a.active i {
+    color: #ffffff;
+}
+
+.sidebar-footer {
+    padding: 18px 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 0.76rem;
+    color: #9cb3a7;
+}
+
+.sidebar-footer strong {
+    display: block;
+    color: #e6f0eb;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+/* ================= CONTENIDO PRINCIPAL ================= */
+.main-content {
+    flex: 1;
+    margin-left: 272px;
+    padding: 28px 36px 48px;
+    max-width: 1600px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 22px;
+    margin-bottom: 26px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.topbar-left h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--ink-primary);
+    line-height: 1.2;
+}
+
+.topbar-left p {
+    color: var(--ink-secondary);
+    font-size: 0.93rem;
+    margin-top: 5px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-card);
+    border: 1px solid var(--border-light);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--forest-800);
+    box-shadow: var(--shadow-xs);
+}
+
+.pulse-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: var(--emerald-500);
+    box-shadow: 0 0 0 3px rgba(42, 157, 104, 0.22);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: var(--forest-900);
+    color: #fff;
+    border: none;
+    padding: 9px 13px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* ================= COMPONENTES REUTILIZABLES ================= */
+.panel {
+    background: var(--surface-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--surface-subtle);
+}
+
+.panel-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink-primary);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.panel-title i {
+    color: var(--emerald-600);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.badge-optimo { background: var(--emerald-100); color: var(--forest-800); }
+.badge-alerta { background: var(--ochre-100); color: var(--ochre-600); }
+.badge-lluvia { background: var(--sky-100); color: var(--sky-600); }
+.badge-critico { background: var(--crimson-100); color: var(--crimson-600); }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 20px 18px 40px;
+    }
+    .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

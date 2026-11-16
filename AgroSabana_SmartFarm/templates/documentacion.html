@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block page_title %}Investigación Territorial y Arquitectura Agro-IoT{% endblock %}
+{% block page_subtitle %}Estudio de cercanía geográfica, interconexión municipal en Sabana Centro y telemetría individual por agricultor{% endblock %}
+
+{% block extra_css %}
+<style>
+    .research-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        max-width: 1120px;
+    }
+
+    .research-section h2 {
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-size: 1.35rem;
+        color: var(--forest-900);
+        border-bottom: 2px solid var(--emerald-100);
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+    }
+
+    .research-section p {
+        color: var(--ink-secondary);
+        font-size: 0.94rem;
+        margin-bottom: 12px;
+        line-height: 1.7;
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+    }
+
+    .meta-card {
+        background: var(--bg-canvas);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        font-size: 0.86rem;
+    }
+
+    .meta-card strong {
+        display: block;
+        color: var(--emerald-600);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+    }
+
+    .corridor-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.86rem;
+    }
+
+    .corridor-table th, .corridor-table td {
+        padding: 11px 14px;
+        border: 1px solid var(--border-light);
+        text-align: left;
+    }
+
+    .corridor-table th {
+        background: var(--forest-900);
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .corridor-table tr:nth-child(even) td {
+        background: var(--bg-canvas);
+    }
+
+    .arch-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 12px;
+    }
+
+    .arch-step {
+        background: var(--surface-subtle);
+        border-left: 4px solid var(--forest-700);
+        padding: 15px;
+        border-radius: var(--radius-sm);
+    }
+
+    .arch-step h4 {
+        font-size: 0.9rem;
+        color: var(--ink-primary);
+        margin-bottom: 6px;
+    }
+
+    .arch-step p {
+        font-size: 0.83rem;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="research-layout">
+
+    <section class="panel research-section">
+        <h2>1. Ficha Técnica de la Investigación Aplicada</h2>
+        <div class="meta-grid">
+            <div class="meta-card"><strong>Proyecto</strong>AgroSabana Centro: Red Agroclimática Intermunicipal</div>
+            <div class="meta-card"><strong>Cobertura Geográfica</strong>Sopó, Chía, Cajicá, Zipaquirá, Tocancipá, Gachancipá, Nemocón y Cogua</div>
+            <div class="meta-card"><strong>Institución</strong>Universidad de Cundinamarca · Extensión Chía</div>
+            <div class="meta-card"><strong>Autores</strong>Juan David Vargas Sánchez · Sharick Lorena Doncel Ramírez · Camilo Andrés Sichaca Cañon</div>
+            <div class="meta-card"><strong>Enfoque</strong>Agricultura de Precisión, Edge IoT (ESP32) y Comunicación de Datos Rural</div>
+            <div class="meta-card"><strong>Despliegue Web</strong>Arquitectura Python Flask con Certificación TLS/HTTPS</div>
+        </div>
+    </section>
+
+    <section class="panel research-section">
+        <h2>2. Investigación sobre Cercanía Geográfica e Interconexión Municipal</h2>
+        <p>
+            La provincia de <strong>Sabana Centro</strong> conforma una unidad agroecológica continua sobre la cuenca alta del río Bogotá, ubicada entre los 2.558 y 2.750 m.s.n.m. A pesar de que las cabeceras municipales de Sopó, Chía, Cajicá y Tocancipá se encuentran separadas por distancias viales de apenas <strong>8 a 18 kilómetros</strong>, la topografía de valle aluvial y piedemonte genera microclimas marcadamente distintos entre veredas vecinas.
+        </p>
+        <p>
+            El análisis espacial demostró que los frentes fríos de radiación nocturna se desplazan siguiendo el corredor hídrico desde <strong>Cogua y Zipaquirá hacia Cajicá, Chía y Sopó</strong> con un desfase temporal de 35 a 75 minutos. Interconectar las torres de cada municipio en una red unificada permite que la detección de un descenso térmico brusco en Zipaquirá o Cogua active alertas preventivas anticipadas en los cultivos de hortalizas y flores de Sopó y Chía.
+        </p>
+
+        <table class="corridor-table">
+            <thead>
+                <tr>
+                    <th>Corredor Agroclimático</th>
+                    <th>Distancia Media entre Nodos</th>
+                    <th>Vocación Productiva Predominante</th>
+                    <th>Ventaja de la Interconexión</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Norte:</strong> Cogua – Zipaquirá – Nemocón</td>
+                    <td>11.4 km</td>
+                    <td>Papa sabanera, cebada y ganadería de altura</td>
+                    <td>Detección temprana de heladas de páramo y frentes húmedos.</td>
+                </tr>
+                <tr>
+                    <td><strong>Centro:</strong> Tocancipá – Gachancipá – Sopó</td>
+                    <td>9.8 km</td>
+                    <td>Hortalizas de hoja, maíz, zanahoria y lechería</td>
+                    <td>Balance hídrico compartido y sincronización de turnos de riego.</td>
+                </tr>
+                <tr>
+                    <td><strong>Sur-Occidente:</strong> Cajicá – Chía</td>
+                    <td>8.2 km</td>
+                    <td>Floricultura de exportación, fresa e invernaderos</td>
+                    <td>Control de punto de rocío y prevención de hongos foliares (Botrytis).</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="panel research-section">
+        <h2>3. Modelo de Vínculo Directo: Cada Agricultor con su Torre</h2>
+        <p>
+            Las estaciones meteorológicas tradicionales operan a escala municipal o departamental, entregando promedios generales que no reflejan la realidad del suelo de una finca específica. En esta investigación se diseñó un esquema de <strong>telemetría predial personalizada (1 a 1)</strong>:
+        </p>
+        <div class="arch-steps">
+            <div class="arch-step">
+                <h4>Nodo en Parcela (ESP32)</h4>
+                <p>Instalado directamente en el lote del productor, calibrado según la textura del suelo (franco, arcilloso o andisol) y profundidad radicular del cultivo.</p>
+            </div>
+            <div class="arch-step">
+                <h4>Identificador Único de Finca</h4>
+                <p>Cada torre posee un código territorial (ej. <code>TR-SOPO-CHU-01</code>) asociado a la cédula catastral del predio, hectárea sembrada y etapa fenológica.</p>
+            </div>
+            <div class="arch-step">
+                <h4>App Móvil Personalizada</h4>
+                <p>El agricultor consulta únicamente su estación desde el celular, recibiendo recomendaciones exactas de riego y alertas críticas sin depender de terceros.</p>
+            </div>
+            <div class="arch-step">
+                <h4>Inteligencia Colectiva</h4>
+                <p>De forma anónima y agregada, las 12 torres alimentan el Data Warehouse regional para estudios de resiliencia climática en Sabana Centro.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel research-section">
+        <h2>4. Arquitectura Tecnológica y Despliegue Seguro en la Nube</h2>
+        <p>
+            El ecosistema se construyó bajo una arquitectura ligera y escalable: microcontroladores <strong>ESP32-WROOM</strong> con alimentación solar autónoma transmiten tramas JSON mediante peticiones HTTPS hacia una API REST desarrollada en <strong>Python (Flask + Gunicorn)</strong>. Para el almacenamiento histórico se implementa un modelo estrella en SQL Server con procesos ETL hacia Power BI.
+        </p>
+        <p>
+            El proyecto está preparado para despliegue continuo en plataformas PaaS gratuitas (como <strong>Render, Railway o Koyeb</strong>) conectadas a GitHub, las cuales aprovisionan automáticamente subdominios personalizados y certificados de seguridad <strong>SSL/TLS (Let's Encrypt)</strong> para garantizar integridad en la transmisión de datos desde el campo.
+        </p>
+    </section>
+
+</div>
+{% endblock %}

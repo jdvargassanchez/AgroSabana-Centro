@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AgroSabana Centro | Red Agroclimática IoT{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="brand-header">
+            <span class="brand-badge"><i class="fas fa-leaf"></i> Sabana Centro · Cundinamarca</span>
+            <div class="brand-title"><i class="fas fa-tractor"></i> AgroSabana</div>
+            <p class="brand-subtitle">Red de Telemetría y Gestión Predial</p>
+        </div>
+
+        <div class="nav-section-label">Operación Agrícola</div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard') }}" class="{% if active_page == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> Centro de Monitoreo
+            </a>
+            <a href="{{ url_for('torres') }}" class="{% if active_page == 'torres' %}active{% endif %}">
+                <i class="fas fa-broadcast-tower"></i> Torres y Fincas
+            </a>
+            <a href="{{ url_for('app_movil') }}" class="{% if active_page == 'app_movil' %}active{% endif %}">
+                <i class="fas fa-mobile-alt"></i> App del Agricultor
+            </a>
+            <a href="{{ url_for('contacto') }}" class="{% if active_page == 'contacto' %}active{% endif %}">
+                <i class="fas fa-envelope"></i> Contacto    
+            </a>
+            <a href="{{ url_for('powerbi') }}" class="{% if active_page == 'powerbi' %}active{% endif %}">
+                <i class="fas fa-database"></i> Analítica Histórica BI
+            </a>
+        </nav>
+
+        <div class="nav-section-label">Sustento Académico</div>
+        <nav class="sidebar-nav" style="flex-grow: 0; margin-bottom: 16px;">
+            <a href="{{ url_for('documentacion') }}" class="{% if active_page == 'documentacion' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i> Investigación Territorial
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>Universidad de Cundinamarca</strong>
+            <span>Extensión Chía</span>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+                    <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>{% block page_title %}{% endblock %}</h1>
+                </div>
+                <p>{% block page_subtitle %}{% endblock %}</p>
+            </div>
+            <div class="topbar-right">
+                <div class="status-pill">
+                    <span class="pulse-dot"></span>
+                    <span>12 Estaciones Activas · Sabana Centro</span>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

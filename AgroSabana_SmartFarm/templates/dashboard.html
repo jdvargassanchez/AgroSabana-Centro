@@ -1,0 +1,600 @@
+{% extends "base.html" %}
+
+{% block page_title %}Centro de Monitoreo Agroclimático{% endblock %}
+{% block page_subtitle %}Supervisión en tiempo real por municipio, predio agrícola y torre dedicada en Sabana Centro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .agro-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 20px;
+    }
+
+    /* Barra de selección centralizada */
+    .control-bar {
+        grid-column: span 12;
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 18px 22px;
+        box-shadow: var(--shadow-sm);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        align-items: end;
+    }
+
+    .control-group label {
+        display: block;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-secondary);
+        margin-bottom: 6px;
+    }
+
+    .control-group select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-canvas);
+        color: var(--ink-primary);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .control-group select:focus {
+        border-color: var(--emerald-600);
+        background-color: #ffffff;
+    }
+
+    /* Ficha del predio seleccionado */
+    .farmer-banner {
+        grid-column: span 12;
+        background: linear-gradient(120deg, var(--forest-900) 0%, var(--forest-800) 100%);
+        color: #ffffff;
+        border-radius: var(--radius-md);
+        padding: 20px 26px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .farmer-meta h2 {
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-size: 1.35rem;
+        margin-bottom: 4px;
+    }
+
+    .farmer-meta p {
+        font-size: 0.88rem;
+        color: #c2d9cd;
+    }
+
+    .farmer-tags {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .farmer-tag {
+        background: rgba(255, 255, 255, 0.11);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        padding: 7px 13px;
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* KPIs Agronómicos */
+    .kpi-row {
+        grid-column: span 12;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+        gap: 16px;
+    }
+
+    .kpi-card {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-xs);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .kpi-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--ink-secondary);
+    }
+
+    .kpi-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+    }
+
+    .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--ink-primary);
+        letter-spacing: -0.02em;
+    }
+
+    .kpi-foot {
+        font-size: 0.76rem;
+        color: var(--ink-muted);
+        margin-top: 6px;
+    }
+
+    /* Alerta Agronómica */
+    .advisory-box {
+        grid-column: span 12;
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-left: 5px solid var(--emerald-600);
+        border-radius: var(--radius-md);
+        padding: 18px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        box-shadow: var(--shadow-xs);
+    }
+
+    .advisory-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .advisory-led {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: var(--emerald-500);
+        box-shadow: 0 0 0 5px rgba(42, 157, 104, 0.18);
+        flex-shrink: 0;
+    }
+
+    /* Gráficas */
+    .col-8 { grid-column: span 8; }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    .col-12 { grid-column: span 12; }
+
+    .chart-wrap {
+        position: relative;
+        height: 270px;
+        width: 100%;
+    }
+
+    /* Tabla de Telemetría */
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .agro-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+
+    .agro-table th {
+        text-align: left;
+        padding: 11px 14px;
+        background-color: var(--surface-subtle);
+        color: var(--ink-secondary);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .agro-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--ink-primary);
+    }
+
+    .agro-table tr:hover td {
+        background-color: #f9fbf9;
+    }
+
+    @media (max-width: 1024px) {
+        .col-8, .col-4, .col-6 { grid-column: span 12; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="agro-grid">
+
+    <!-- SELECTOR CENTRALIZADO: MUNICIPIO -> AGRICULTOR / TORRE -->
+    <div class="control-bar">
+        <div class="control-group">
+            <label for="filtroMunicipio"><i class="fas fa-map-marker-alt"></i> 1. Municipio Sabana Centro</label>
+            <select id="filtroMunicipio">
+                <option value="TODOS">Todos los Municipios (Red Regional)</option>
+                <option value="Sopó">Sopó</option>
+                <option value="Chía">Chía</option>
+                <option value="Cajicá">Cajicá</option>
+                <option value="Zipaquirá">Zipaquirá</option>
+                <option value="Tocancipá">Tocancipá</option>
+                <option value="Gachancipá">Gachancipá</option>
+                <option value="Nemocón">Nemocón</option>
+                <option value="Cogua">Cogua</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="filtroTorre"><i class="fas fa-user-tag"></i> 2. Agricultor / Torre Asignada</label>
+            <select id="filtroTorre">
+                <option value="TODAS">Vista Consolidada de Estaciones</option>
+                {% for t in torres %}
+                <option value="{{ t.id }}" data-mun="{{ t.municipio }}">{{ t.municipio }} · {{ t.agricultor }} ({{ t.id }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="control-group" style="text-align: right;">
+            <span style="font-size: 0.8rem; color: var(--ink-secondary); font-weight: 600;">
+                <i class="fas fa-sync-alt" style="color: var(--emerald-600);"></i> Sincronización ESP32 cada 4s
+            </span>
+            <div id="ultimaSync" style="font-size: 0.76rem; color: var(--ink-muted); margin-top: 3px;">Conectando con nodo central...</div>
+        </div>
+    </div>
+
+    <!-- BANNER DE CONTEXTO AGRÍCOLA PERSONALIZADO -->
+    <div class="farmer-banner" id="farmerBanner">
+        <div class="farmer-meta">
+            <h2 id="bannerTitulo">Red Agroclimática Regional · Sabana Centro</h2>
+            <p id="bannerSubtitulo">Monitoreo integrado de 12 fincas productoras de hortalizas, papa, flores, maíz y lechería.</p>
+        </div>
+        <div class="farmer-tags" id="bannerTags">
+            <span class="farmer-tag"><i class="fas fa-seedling"></i> 8 Municipios Interconectados</span>
+            <span class="farmer-tag"><i class="fas fa-shield-alt"></i> Alerta Temprana de Heladas</span>
+        </div>
+    </div>
+
+    <!-- TARJETAS DE VARIABLES AGRONÓMICAS -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Temp. Ambiente</span>
+                <span class="kpi-icon" style="background: #fef3c7; color: #b45309;"><i class="fas fa-temperature-low"></i></span>
+            </div>
+            <div class="kpi-value" id="kpiTemp">-- °C</div>
+            <div class="kpi-foot">Umbral helada: &le; 5.5 °C</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Humedad Relativa</span>
+                <span class="kpi-icon" style="background: #e0f2fe; color: #0369a1;"><i class="fas fa-tint"></i></span>
+            </div>
+            <div class="kpi-value" id="kpiHumA">-- %</div>
+            <div class="kpi-foot">Riesgo fitosanitario &gt; 88%</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Humedad del Suelo</span>
+                <span class="kpi-icon" style="background: #e3f4ec; color: #1e7e53;"><i class="fas fa-water"></i></span>
+            </div>
+            <div class="kpi-value" id="kpiHumS">-- %</div>
+            <div class="kpi-foot">Capacidad de campo ideal: 55-75%</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Prob. Precipitación</span>
+                <span class="kpi-icon" style="background: #ede9fe; color: #6d28d9;"><i class="fas fa-cloud-rain"></i></span>
+            </div>
+            <div class="kpi-value" id="kpiPrec">-- %</div>
+            <div class="kpi-foot">Control automático de fertirriego</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Evapotranspiración (ET₀)</span>
+                <span class="kpi-icon" style="background: #ffedd5; color: #c2410c;"><i class="fas fa-sun"></i></span>
+            </div>
+            <div class="kpi-value" id="kpiEt0">-- mm</div>
+            <div class="kpi-foot">Demanda hídrica diaria estimada</div>
+        </div>
+    </div>
+
+    <!-- RECOMENDACIÓN AGRONÓMICA INMEDIATA -->
+    <div class="advisory-box" id="advisoryBox">
+        <div class="advisory-info">
+            <div class="advisory-led" id="advisoryLed"></div>
+            <div>
+                <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--ink-muted);">Diagnóstico Agronómico en Tiempo Real</div>
+                <div style="font-size: 1rem; font-weight: 700; color: var(--ink-primary);" id="advisoryEstado">Analizando telemetría de campo...</div>
+                <div style="font-size: 0.88rem; color: var(--ink-secondary); margin-top: 2px;" id="advisoryTexto">Esperando paquete JSON desde nodos ESP32.</div>
+            </div>
+        </div>
+        <a href="{{ url_for('app_movil') }}" style="text-decoration: none; background: var(--forest-800); color: #fff; padding: 9px 16px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;">
+            <i class="fas fa-mobile-alt"></i> Ver Alerta en App Móvil
+        </a>
+    </div>
+
+    <!-- GRÁFICA 1: EVOLUCIÓN TÉRMICA Y HUMEDAD DE SUELO -->
+    <div class="panel col-8">
+        <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-chart-area"></i> Dinámica Térmica vs. Retención Hídrica del Suelo</h3>
+            <span class="badge badge-optimo">Serie Temporal en Vivo</span>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="chartTendencia"></canvas>
+        </div>
+    </div>
+
+    <!-- GRÁFICA 2: COMPARATIVA POR MUNICIPIO -->
+    <div class="panel col-4">
+        <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-balance-scale"></i> Humedad Suelo por Municipio</h3>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="chartMunicipios"></canvas>
+        </div>
+    </div>
+
+    <!-- TABLA DETALLADA DE ESTACIONES ACTIVAS -->
+    <div class="panel col-12">
+        <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-table"></i> Reporte Operativo por Agricultor y Torre</h3>
+            <span style="font-size: 0.8rem; color: var(--ink-muted);">Datos consolidados desde nodos rurales</span>
+        </div>
+        <div class="table-wrap">
+            <table class="agro-table">
+                <thead>
+                    <tr>
+                        <th>Torre</th>
+                        <th>Municipio / Vereda</th>
+                        <th>Agricultor / Predio</th>
+                        <th>Cultivo Principal</th>
+                        <th>Temp.</th>
+                        <th>Hum. Aire</th>
+                        <th>Hum. Suelo</th>
+                        <th>ET₀</th>
+                        <th>Diagnóstico</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaEstaciones">
+                    <tr><td colspan="9" style="text-align:center; color: var(--ink-muted);">Cargando lecturas de los municipios...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const TORRES_META = {{ torres | tojson }};
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+    Chart.defaults.color = '#42544b';
+
+    // Gráfica 1: Tendencia
+    const chartTendencia = new Chart(document.getElementById('chartTendencia').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['-20s', '-16s', '-12s', '-8s', '-4s', 'Actual'],
+            datasets: [
+                {
+                    label: 'Temperatura (°C)',
+                    data: [16.5, 16.7, 16.6, 16.8, 16.9, 17.0],
+                    borderColor: '#b45309',
+                    backgroundColor: 'rgba(180, 83, 9, 0.08)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.35
+                },
+                {
+                    label: 'Humedad de Suelo (%)',
+                    data: [61, 61.5, 62, 61.8, 62.2, 62.5],
+                    borderColor: '#1e7e53',
+                    backgroundColor: 'rgba(30, 126, 83, 0.10)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.35
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } },
+            scales: {
+                y: { grid: { color: '#eef2ef' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Gráfica 2: Barras horizontales por municipio
+    const chartMunicipios = new Chart(document.getElementById('chartMunicipios').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Sopó', 'Chía', 'Cajicá', 'Zipaquirá', 'Tocancipá', 'Gachancipá', 'Nemocón', 'Cogua'],
+            datasets: [{
+                label: 'Humedad Suelo (%)',
+                data: [62, 57, 63, 70, 56, 61, 52, 70],
+                backgroundColor: '#245741',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { min: 0, max: 100, grid: { color: '#eef2ef' } },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    const selMun = document.getElementById('filtroMunicipio');
+    const selTorre = document.getElementById('filtroTorre');
+
+    selMun.addEventListener('change', () => {
+        const mun = selMun.value;
+        Array.from(selTorre.options).forEach(opt => {
+            if (opt.value === 'TODAS') {
+                opt.style.display = 'block';
+            } else {
+                opt.style.display = (mun === 'TODOS' || opt.dataset.mun === mun) ? 'block' : 'none';
+            }
+        });
+        selTorre.value = 'TODAS';
+        actualizarTelemetria();
+    });
+
+    selTorre.addEventListener('change', actualizarTelemetria);
+
+    function actualizarBanner() {
+        const mun = selMun.value;
+        const tid = selTorre.value;
+        const titulo = document.getElementById('bannerTitulo');
+        const subtitulo = document.getElementById('bannerSubtitulo');
+        const tags = document.getElementById('bannerTags');
+
+        if (tid !== 'TODAS') {
+            const t = TORRES_META.find(x => x.id === tid);
+            titulo.textContent = `${t.finca} · ${t.agricultor}`;
+            subtitulo.textContent = `Estación dedicada ${t.id} ubicada en Vereda ${t.vereda}, ${t.municipio} (${t.altitud} m.s.n.m.)`;
+            tags.innerHTML = `
+                <span class="farmer-tag"><i class="fas fa-seedling"></i> Cultivo: ${t.cultivo}</span>
+                <span class="farmer-tag"><i class="fas fa-ruler-combined"></i> Área: ${t.hectareas} ha · Suelo ${t.suelo}</span>
+                <span class="farmer-tag"><i class="fas fa-solar-panel"></i> ${t.energia}</span>
+            `;
+        } else if (mun !== 'TODOS') {
+            const lista = TORRES_META.filter(x => x.municipio === mun);
+            titulo.textContent = `Nodo Municipal de ${mun} · Sabana Centro`;
+            subtitulo.textContent = `Consolidado agroclimático de ${lista.length} estaciones rurales interconectadas en ${mun}.`;
+            tags.innerHTML = `
+                <span class="farmer-tag"><i class="fas fa-broadcast-tower"></i> ${lista.length} Torres Activas</span>
+                <span class="farmer-tag"><i class="fas fa-network-wired"></i> Enlace Regional Sabana Centro</span>
+            `;
+        } else {
+            titulo.textContent = 'Red Agroclimática Regional · Sabana Centro';
+            subtitulo.textContent = 'Monitoreo integrado de 12 fincas productoras de hortalizas, papa, flores, maíz y lechería.';
+            tags.innerHTML = `
+                <span class="farmer-tag"><i class="fas fa-seedling"></i> 8 Municipios Interconectados</span>
+                <span class="farmer-tag"><i class="fas fa-shield-alt"></i> Alerta Temprana de Heladas</span>
+            `;
+        }
+    }
+
+    async function actualizarTelemetria() {
+        actualizarBanner();
+        const mun = selMun.value;
+        const tid = selTorre.value;
+
+        try {
+            const res = await fetch(`/api/telemetria?municipio=${encodeURIComponent(mun)}&torre_id=${encodeURIComponent(tid)}`);
+            const payload = await res.json();
+            const rows = payload.lecturas;
+            if (!rows.length) return;
+
+            document.getElementById('ultimaSync').textContent = `Último paquete: ${payload.timestamp}`;
+
+            // Promedios o lectura individual
+            const avg = key => (rows.reduce((s, r) => s + r[key], 0) / rows.length);
+            const tAvg = avg('temperatura').toFixed(1);
+            const haAvg = avg('humedad_aire').toFixed(1);
+            const hsAvg = avg('humedad_suelo').toFixed(1);
+            const pAvg = avg('precipitacion').toFixed(1);
+            const etAvg = avg('evapotranspiracion').toFixed(2);
+
+            document.getElementById('kpiTemp').textContent = `${tAvg} °C`;
+            document.getElementById('kpiHumA').textContent = `${haAvg} %`;
+            document.getElementById('kpiHumS').textContent = `${hsAvg} %`;
+            document.getElementById('kpiPrec').textContent = `${pAvg} %`;
+            document.getElementById('kpiEt0').textContent = `${etAvg} mm`;
+
+            // Actualizar serie de tiempo
+            chartTendencia.data.datasets[0].data.shift();
+            chartTendencia.data.datasets[0].data.push(parseFloat(tAvg));
+            chartTendencia.data.datasets[1].data.shift();
+            chartTendencia.data.datasets[1].data.push(parseFloat(hsAvg));
+            chartTendencia.update('none');
+
+            // Diagnóstico prioritario
+            const critica = rows.find(r => r.nivel === 'critico') || rows.find(r => r.nivel === 'alerta') || rows.find(r => r.nivel === 'lluvia') || rows[0];
+            const box = document.getElementById('advisoryBox');
+            const led = document.getElementById('advisoryLed');
+            const estEl = document.getElementById('advisoryEstado');
+            const txtEl = document.getElementById('advisoryTexto');
+
+            const colores = {
+                optimo: '#1e7e53',
+                alerta: '#b45309',
+                lluvia: '#0369a1',
+                critico: '#b91c1c'
+            };
+            const c = colores[critica.nivel] || '#1e7e53';
+            box.style.borderLeftColor = c;
+            led.style.backgroundColor = c;
+            estEl.style.color = c;
+            estEl.textContent = `${critica.estado} — ${critica.finca} (${critica.municipio})`;
+            txtEl.textContent = critica.recomendacion;
+
+            // Renderizar tabla
+            const tbody = document.getElementById('tablaEstaciones');
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td><strong>${r.id}</strong></td>
+                    <td>${r.municipio}<br><small style="color:var(--ink-muted)">Vda. ${r.vereda}</small></td>
+                    <td><strong>${r.agricultor}</strong><br><small style="color:var(--ink-muted)">${r.finca}</small></td>
+                    <td>${r.cultivo}</td>
+                    <td><strong>${r.temperatura} °C</strong></td>
+                    <td>${r.humedad_aire} %</td>
+                    <td><strong>${r.humedad_suelo} %</strong></td>
+                    <td>${r.evapotranspiracion} mm</td>
+                    <td><span class="badge badge-${r.nivel}">${r.estado}</span></td>
+                </tr>
+            `).join('');
+
+        } catch (err) {
+            console.error('Error sincronizando telemetría:', err);
+        }
+    }
+
+    actualizarTelemetria();
+    setInterval(actualizarTelemetria, 4000);
+</script>
+{% endblock %}

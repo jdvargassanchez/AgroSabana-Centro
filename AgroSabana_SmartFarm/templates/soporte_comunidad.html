@@ -1,0 +1,1074 @@
+{% extends "base.html" %}
+
+{% block page_title %}Centro de Ayuda, Comunidad y Contacto · AgroSabana{% endblock %}
+{% block page_subtitle %}Preguntas frecuentes, reseñas verificadas de agricultores y canales de comunicación sincrónica y asincrónica{% endblock %}
+
+{% block extra_css %}
+<style>
+    .support-hero {
+        background: linear-gradient(135deg, var(--forest-950) 0%, var(--forest-800) 100%);
+        color: #ffffff;
+        border-radius: var(--radius-lg);
+        padding: 32px 34px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 28px;
+        display: grid;
+        grid-template-columns: 1.35fr 0.85fr;
+        gap: 24px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .support-hero::after {
+        content: "";
+        position: absolute;
+        right: -50px;
+        bottom: -50px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .support-hero h2 {
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-size: 1.75rem;
+        line-height: 1.24;
+        margin: 10px 0 12px;
+    }
+
+    .support-hero p {
+        color: #d4e7dd;
+        font-size: 0.94rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .sla-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .sla-box {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 14px 16px;
+    }
+
+    .sla-box span {
+        display: block;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #88d4b0;
+        font-weight: 700;
+    }
+
+    .sla-box strong {
+        display: block;
+        font-size: 1.25rem;
+        color: #ffffff;
+        margin: 4px 0 2px;
+    }
+
+    .sla-box small {
+        font-size: 0.74rem;
+        color: #cde0d6;
+    }
+
+    /* Navegación Rápida por Secciones */
+    .section-jumper {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+    }
+
+    .jumper-pill {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        color: var(--ink-primary);
+        padding: 9px 16px;
+        border-radius: 999px;
+        font-size: 0.83rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: var(--shadow-xs);
+        transition: all 0.2s ease;
+    }
+
+    .jumper-pill:hover {
+        border-color: var(--emerald-600);
+        color: var(--emerald-600);
+        transform: translateY(-1px);
+    }
+
+    /* SECCIÓN 1: PREGUNTAS FRECUENTES (FAQ) */
+    .faq-container {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        padding: 26px 28px;
+        box-shadow: var(--shadow-xs);
+        margin-bottom: 30px;
+    }
+
+    .faq-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 16px 0 20px;
+    }
+
+    .faq-search {
+        position: relative;
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .faq-search i {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ink-muted);
+        font-size: 0.85rem;
+    }
+
+    .faq-search input {
+        width: 100%;
+        padding: 10px 14px 10px 36px;
+        border-radius: 10px;
+        border: 1px solid var(--border-light);
+        background: #f8faf8;
+        font-family: inherit;
+        font-size: 0.86rem;
+        color: var(--ink-primary);
+    }
+
+    .faq-search input:focus {
+        outline: none;
+        border-color: var(--emerald-600);
+        background: #ffffff;
+    }
+
+    .faq-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .faq-cat-btn {
+        border: 1px solid var(--border-light);
+        background: #f6f9f7;
+        color: var(--ink-secondary);
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .faq-cat-btn.active, .faq-cat-btn:hover {
+        background: var(--emerald-600);
+        color: #ffffff;
+        border-color: var(--emerald-600);
+    }
+
+    .faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+    }
+
+    .faq-item {
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fbfdfb;
+        transition: border-color 0.2s;
+    }
+
+    .faq-item.open {
+        border-color: var(--emerald-600);
+        background: #ffffff;
+    }
+
+    .faq-question {
+        width: 100%;
+        border: none;
+        background: transparent;
+        padding: 15px 18px;
+        text-align: left;
+        font-family: inherit;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--ink-primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+    }
+
+    .faq-question i {
+        color: var(--emerald-600);
+        transition: transform 0.25s ease;
+        flex-shrink: 0;
+    }
+
+    .faq-item.open .faq-question i {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        display: none;
+        padding: 0 18px 16px;
+        font-size: 0.87rem;
+        line-height: 1.62;
+        color: var(--ink-secondary);
+        border-top: 1px solid #eef3ef;
+        padding-top: 12px;
+    }
+
+    .faq-item.open .faq-answer {
+        display: block;
+    }
+
+    /* SECCIÓN 2: CALIFICACIONES Y COMENTARIOS DE AGRICULTORES */
+    .reviews-grid {
+        display: grid;
+        grid-template-columns: 0.95fr 1.25fr;
+        gap: 24px;
+        margin-bottom: 30px;
+        align-items: start;
+    }
+
+    .rating-summary-card, .reviews-feed-card {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        padding: 24px 26px;
+        box-shadow: var(--shadow-xs);
+    }
+
+    .rating-big-box {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 16px;
+        background: #f4faf6;
+        border: 1px solid #d1fae5;
+        border-radius: 14px;
+        margin-bottom: 18px;
+    }
+
+    .rating-score {
+        font-size: 2.6rem;
+        font-weight: 800;
+        color: var(--forest-950);
+        line-height: 1;
+    }
+
+    .stars-gold {
+        color: #f59e0b;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+    }
+
+    .rating-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 20px;
+    }
+
+    .bar-row {
+        display: grid;
+        grid-template-columns: 44px 1fr 38px;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--ink-secondary);
+    }
+
+    .bar-track {
+        height: 8px;
+        background: #e5ece8;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: var(--emerald-600);
+        border-radius: 999px;
+    }
+
+    /* Selector interactivo de estrellas */
+    .star-picker {
+        display: flex;
+        gap: 6px;
+        margin: 6px 0 12px;
+    }
+
+    .star-pick-btn {
+        border: none;
+        background: transparent;
+        font-size: 1.45rem;
+        color: #cbd5e1;
+        cursor: pointer;
+        padding: 0 2px;
+        transition: transform 0.15s, color 0.15s;
+    }
+
+    .star-pick-btn.selected, .star-pick-btn:hover {
+        color: #f59e0b;
+        transform: scale(1.12);
+    }
+
+    .form-input, .form-textarea, .form-select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 9px;
+        border: 1px solid var(--border-light);
+        background: #f9fbf9;
+        color: var(--ink-primary);
+        font-family: inherit;
+        font-size: 0.85rem;
+        margin-bottom: 11px;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--emerald-600);
+        background: #ffffff;
+    }
+
+    .btn-primary-agro {
+        width: 100%;
+        border: none;
+        background: var(--emerald-600);
+        color: #ffffff;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary-agro:hover {
+        background: var(--forest-800);
+    }
+
+    .review-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-height: 540px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .review-card {
+        border: 1px solid var(--border-light);
+        border-radius: 13px;
+        padding: 15px 17px;
+        background: #fbfdfb;
+    }
+
+    .review-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .reviewer-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .reviewer-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--emerald-100);
+        color: var(--forest-800);
+        font-weight: 800;
+        font-size: 0.82rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .verified-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--emerald-600);
+        background: var(--emerald-100);
+        padding: 2px 8px;
+        border-radius: 999px;
+    }
+
+    /* SECCIÓN 3: CONTACTO SINCRÓNICO Y ASINCRÓNICO */
+    .contact-dual-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .comm-panel {
+        background: var(--surface-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        padding: 26px 28px;
+        box-shadow: var(--shadow-xs);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .comm-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 4px 11px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+    }
+
+    .comm-badge.sync {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .comm-badge.async {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    .sync-channels {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 14px 0 16px;
+    }
+
+    .sync-link-card {
+        border: 1px solid var(--border-light);
+        background: #f7faf8;
+        border-radius: 11px;
+        padding: 12px;
+        text-decoration: none;
+        color: var(--ink-primary);
+        transition: all 0.2s;
+    }
+
+    .sync-link-card:hover {
+        border-color: var(--emerald-600);
+        background: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .sync-link-card strong {
+        display: block;
+        font-size: 0.84rem;
+        margin-top: 4px;
+    }
+
+    .sync-link-card span {
+        font-size: 0.74rem;
+        color: var(--ink-secondary);
+    }
+
+    /* Mini Chat Sincrónico en Vivo */
+    .live-chat-box {
+        border: 1px solid var(--border-light);
+        border-radius: 13px;
+        overflow: hidden;
+        background: #f4f7f5;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header-bar {
+        background: var(--forest-950);
+        color: #ffffff;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chat-messages {
+        height: 210px;
+        overflow-y: auto;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        font-size: 0.8rem;
+    }
+
+    .msg-bubble {
+        max-width: 84%;
+        padding: 9px 12px;
+        border-radius: 11px;
+        line-height: 1.42;
+    }
+
+    .msg-bubble.bot {
+        background: #ffffff;
+        color: var(--ink-primary);
+        border: 1px solid var(--border-light);
+        align-self: flex-start;
+    }
+
+    .msg-bubble.user {
+        background: var(--emerald-600);
+        color: #ffffff;
+        align-self: flex-end;
+    }
+
+    .chat-input-row {
+        display: flex;
+        border-top: 1px solid var(--border-light);
+        background: #ffffff;
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .chat-input-row input {
+        flex: 1;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-family: inherit;
+        font-size: 0.82rem;
+    }
+
+    .chat-input-row button {
+        border: none;
+        background: var(--forest-800);
+        color: #ffffff;
+        padding: 0 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .ticket-confirmation {
+        display: none;
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #ecfdf5;
+        border: 1px solid #6ee7b7;
+        color: #065f46;
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
+    @media (max-width: 980px) {
+        .support-hero, .reviews-grid, .contact-dual-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .sla-cards, .sync-channels {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- BANNER PRINCIPAL -->
+<div class="support-hero">
+    <div>
+        <span class="brand-badge"><i class="fas fa-headset"></i> Acompañamiento Integral al Agricultor</span>
+        <h2>Resolvemos tus dudas en el campo, en vivo o cuando recuperes señal</h2>
+        <p>
+            Sabemos que en las veredas y fincas alejadas la conectividad es intermitente. Por eso integramos respuestas inmediatas, una comunidad de productores verificados y canales tanto <strong>sincrónicos (tiempo real)</strong> como <strong>asincrónicos (tickets y correo offline)</strong>.
+        </p>
+    </div>
+    <div class="sla-cards">
+        <div class="sla-box">
+            <span>Atención Sincrónica</span>
+            <strong>&lt; 3 min</strong>
+            <small>Chat técnico y WhatsApp en vivo</small>
+        </div>
+        <div class="sla-box">
+            <span>Tickets Asincrónicos</span>
+            <strong>24 / 7</strong>
+            <small>Radicación y seguimiento por correo</small>
+        </div>
+    </div>
+</div>
+
+<!-- ACCESOS RÁPIDOS -->
+<div class="section-jumper">
+    <a href="#seccion-faq" class="jumper-pill"><i class="fas fa-question-circle" style="color:var(--emerald-600);"></i> Preguntas Frecuentes (FAQ)</a>
+    <a href="#seccion-comunidad" class="jumper-pill"><i class="fas fa-star" style="color:#f59e0b;"></i> Calificaciones y Comentarios</a>
+    <a href="#seccion-contacto" class="jumper-pill"><i class="fas fa-comments" style="color:#0284c7;"></i> Contacto Sincrónico y Asincrónico</a>
+</div>
+
+<!-- ===================================================================== -->
+<!-- 1. APARTADO DE PREGUNTAS FRECUENTES (FAQ)                             -->
+<!-- ===================================================================== -->
+<section id="seccion-faq" class="faq-container">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+            <h3 style="margin:0; font-size:1.25rem; color:var(--ink-primary);">Preguntas Frecuentes sobre la Torre y la App Personal</h3>
+            <p style="margin:4px 0 0; font-size:0.86rem; color:var(--ink-secondary);">Filtra por tema o escribe una palabra clave (ej. heladas, sin internet, batería, WhatsApp).</p>
+        </div>
+    </div>
+
+    <div class="faq-toolbar">
+        <div class="faq-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="faqSearchInput" placeholder="Buscar pregunta o palabra clave..." oninput="filtrarFAQ()">
+        </div>
+        <div class="faq-filters">
+            <button type="button" class="faq-cat-btn active" onclick="seleccionarCategoriaFAQ('todas', this)">Todas</button>
+            <button type="button" class="faq-cat-btn" onclick="seleccionarCategoriaFAQ('conectividad', this)">Sin Red / Rural</button>
+            <button type="button" class="faq-cat-btn" onclick="seleccionarCategoriaFAQ('app', this)">Mi App Personal</button>
+            <button type="button" class="faq-cat-btn" onclick="seleccionarCategoriaFAQ('hardware', this)">Torre y Sensores</button>
+        </div>
+    </div>
+
+    <div class="faq-list" id="faqList">
+        <div class="faq-item open" data-cat="conectividad">
+            <button type="button" class="faq-question" onclick="toggleFAQ(this)">
+                <span>1. ¿Qué pasa si en mi finca se cae la señal de celular o no hay internet durante varias horas?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                Tu torre cuenta con arquitectura <strong>Edge Store &amp; Forward</strong>: guarda cada medición en su memoria Flash interna con capacidad para más de 72 horas continuas. Apenas detecta un instante de señal móvil (2G, 3G o 4G), sincroniza automáticamente todos los datos acumulados en paquetes ultraligeros menores a 150 bytes sin perder un solo registro.
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="app">
+            <button type="button" class="faq-question" onclick="toggleFAQ(this)">
+                <span>2. ¿Otros agricultores o vecinos pueden ver los datos de mi finca en la aplicación?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                <strong>No.</strong> Cada torre viene vinculada con un identificador criptográfico único y un código QR privado para su propietario. Tu aplicación muestra exclusivamente el microclima de tu parcela, tus cultivos configurados y tus alertas personales.
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="app">
+            <button type="button" class="faq-question" onclick="toggleFAQ(this)">
+                <span>3. ¿Con cuánta anticipación recibo una alerta temprana de helada en la madrugada?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                El algoritmo embarcado en la torre calcula la tasa de caída térmica y el punto de rocío cada 5 minutos. Cuando proyecta que el lote bajará del umbral configurado (por ejemplo, 3.5 °C), dispara una alarma sonora prioritaria en tu teléfono y un mensaje por WhatsApp entre <strong>15 y 25 minutos antes</strong> de alcanzar la temperatura crítica.
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="hardware">
+            <button type="button" class="faq-question" onclick="toggleFAQ(this)">
+                <span>4. ¿Necesito conectar la torre a la red eléctrica de la finca?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                No requiere cableado eléctrico. Cada torre incluye un panel solar monocristalino de alta eficiencia y un banco de baterías LiFePO4 que garantizan hasta <strong>5 días completos de autonomía</strong> incluso bajo cielo totalmente nublado.
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="conectividad">
+            <button type="button" class="faq-question" onclick="toggleFAQ(this)">
+                <span>5. ¿Cuánto plan de datos consume la torre al mes?</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+                Gracias a la compresión binaria de tramas, una torre que transmite cada 5 minutos consume menos de <strong>18 MB al mes</strong>, funcionando perfectamente con recargas prepago básicas o planes M2M rurales de bajo costo.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 2. COMUNIDAD DE AGRICULTORES: CALIFICACIÓN Y COMENTARIOS              -->
+<!-- ===================================================================== -->
+<section id="seccion-comunidad" class="reviews-grid">
+    <!-- Columna Izquierda: Resumen de Calificaciones + Formulario -->
+    <div class="rating-summary-card">
+        <h3 style="margin:0 0 14px; font-size:1.18rem; color:var(--ink-primary);">Calificación de Productores</h3>
+
+        <div class="rating-big-box">
+            <div class="rating-score" id="avgRatingDisplay">4.9</div>
+            <div>
+                <div class="stars-gold">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <div style="font-size:0.8rem; font-weight:700; color:var(--forest-900); margin-top:3px;">Excelente desempeño rural</div>
+                <div style="font-size:0.74rem; color:var(--ink-secondary);" id="totalReviewsCount">Basado en 4 reseñas verificadas</div>
+            </div>
+        </div>
+
+        <div class="rating-bars">
+            <div class="bar-row">
+                <span>5 ★</span>
+                <div class="bar-track"><div class="bar-fill" style="width:88%;"></div></div>
+                <span>88%</span>
+            </div>
+            <div class="bar-row">
+                <span>4 ★</span>
+                <div class="bar-track"><div class="bar-fill" style="width:12%;"></div></div>
+                <span>12%</span>
+            </div>
+            <div class="bar-row">
+                <span>3 ★</span>
+                <div class="bar-track"><div class="bar-fill" style="width:0%;"></div></div>
+                <span>0%</span>
+            </div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border-light); margin:18px 0;">
+
+        <h4 style="margin:0 0 6px; font-size:0.98rem; color:var(--ink-primary);">Deja tu calificación y experiencia</h4>
+        <p style="margin:0 0 8px; font-size:0.78rem; color:var(--ink-secondary);">Tu opinión ayuda a mejorar los modelos predictivos para otros agricultores.</p>
+
+        <form id="reviewForm" onsubmit="publicarComentario(event)">
+            <div class="star-picker" id="starPicker">
+                <button type="button" class="star-pick-btn selected" data-val="1" onclick="fijarEstrellas(1)">★</button>
+                <button type="button" class="star-pick-btn selected" data-val="2" onclick="fijarEstrellas(2)">★</button>
+                <button type="button" class="star-pick-btn selected" data-val="3" onclick="fijarEstrellas(3)">★</button>
+                <button type="button" class="star-pick-btn selected" data-val="4" onclick="fijarEstrellas(4)">★</button>
+                <button type="button" class="star-pick-btn selected" data-val="5" onclick="fijarEstrellas(5)">★</button>
+            </div>
+            <input type="hidden" id="selectedStars" value="5">
+
+            <input type="text" id="revName" class="form-input" placeholder="Tu nombre completo (ej. Jorge Enrique Ruiz)" required>
+            <input type="text" id="revFarm" class="form-input" placeholder="Finca / Municipio y Cultivo (ej. Finca La Palma · Sopó · Papa)" required>
+            <textarea id="revComment" class="form-textarea" rows="3" placeholder="Cuéntanos cómo te ha ido con las alertas tempranas o la señal en tu finca..." required></textarea>
+
+            <button type="submit" class="btn-primary-agro">
+                <i class="fas fa-paper-plane"></i> Publicar Calificación y Comentario
+            </button>
+        </form>
+    </div>
+
+    <!-- Columna Derecha: Muro de Comentarios -->
+    <div class="reviews-feed-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h3 style="margin:0; font-size:1.18rem; color:var(--ink-primary);">Comentarios de Agricultores con Torre Activa</h3>
+            <span class="verified-tag"><i class="fas fa-shield-alt"></i> Usuarios Verificados</span>
+        </div>
+
+        <div class="review-list" id="reviewList">
+            <div class="review-card">
+                <div class="review-top">
+                    <div class="reviewer-badge">
+                        <div class="reviewer-avatar">HM</div>
+                        <div>
+                            <strong style="font-size:0.88rem; color:var(--ink-primary); display:block;">Hernando Martínez</strong>
+                            <span style="font-size:0.74rem; color:var(--ink-muted);">Finca Los Pinos · Vda. Meusa (Sopó) · Cultivo de Papa</span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="stars-gold">★★★★★</div>
+                        <span style="font-size:0.68rem; color:var(--ink-muted);">Hace 2 días</span>
+                    </div>
+                </div>
+                <p style="margin:0; font-size:0.84rem; line-height:1.55; color:var(--ink-secondary);">
+                    “En la parte alta de la vereda casi nunca entra bien el internet, pero la torre guarda todo y apenas sube un poquito la señal me actualiza la app. La semana pasada me avisó a las 3:20 a.m. que bajó a 2.4 °C y alcanzamos a prender aspersores a tiempo.”
+                </p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <div class="reviewer-badge">
+                        <div class="reviewer-avatar">MC</div>
+                        <div>
+                            <strong style="font-size:0.88rem; color:var(--ink-primary); display:block;">María Consuelo Beltrán</strong>
+                            <span style="font-size:0.74rem; color:var(--ink-muted);">Parcela Santa Ana · Zipaquirá · Hortalizas y Fresa</span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="stars-gold">★★★★★</div>
+                        <span style="font-size:0.68rem; color:var(--ink-muted);">Hace 5 días</span>
+                    </div>
+                </div>
+                <p style="margin:0; font-size:0.84rem; line-height:1.55; color:var(--ink-secondary);">
+                    “Me gusta que la aplicación es solo para mi finca y no tiene enredos. Me dice exactamente cuántos minutos regar según la humedad de la raíz y nos ha ahorrado bastante agua y combustible de motobomba.”
+                </p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <div class="reviewer-badge">
+                        <div class="reviewer-avatar">AR</div>
+                        <div>
+                            <strong style="font-size:0.88rem; color:var(--ink-primary); display:block;">Alfonso Rojas</strong>
+                            <span style="font-size:0.74rem; color:var(--ink-muted);">Hacienda El Roble · Cogua · Pasto Kikuyo y Lechería</span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="stars-gold">★★★★★</div>
+                        <span style="font-size:0.68rem; color:var(--ink-muted);">Hace 1 semana</span>
+                    </div>
+                </div>
+                <p style="margin:0; font-size:0.84rem; line-height:1.55; color:var(--ink-secondary);">
+                    “Lleva 4 meses trabajando con el panel solar sin fallar ni una noche. El módulo de predicción a 72 horas nos ayuda muchísimo a programar fertilización cuando sabemos que viene lluvia ligera.”
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 3. CONTÁCTANOS: COMUNICACIÓN SINCRÓNICA Y ASINCRÓNICA                 -->
+<!-- ===================================================================== -->
+<section id="seccion-contacto" class="contact-dual-grid">
+    <!-- CANAL 1: COMUNICACIÓN SINCRÓNICA (EN TIEMPO REAL) -->
+    <div class="comm-panel">
+        <div>
+            <span class="comm-badge sync"><i class="fas fa-bolt"></i> Comunicación Sincrónica · Tiempo Real</span>
+            <h3 style="margin:0 0 6px; font-size:1.2rem; color:var(--ink-primary);">Asistencia Técnica en Vivo</h3>
+            <p style="margin:0; font-size:0.85rem; color:var(--ink-secondary); line-height:1.55;">
+                Cuando tienes cobertura en tu finca o necesitas resolver una urgencia operativa con tu torre o alerta climática al instante.
+            </p>
+
+            <div class="sync-channels">
+                <a href="https://wa.me/573000000000?text=Hola%20equipo%20AgroSabana,%20necesito%20soporte%20con%20mi%20torre" target="_blank" class="sync-link-card">
+                    <i class="fab fa-whatsapp" style="color:#16a34a; font-size:1.2rem;"></i>
+                    <strong>WhatsApp Agronómico</strong>
+                    <span>Respuesta directa en línea</span>
+                </a>
+                <a href="tel:+576010000000" class="sync-link-card">
+                    <i class="fas fa-phone-alt" style="color:#0284c7; font-size:1.1rem;"></i>
+                    <strong>Línea Directa Rural</strong>
+                    <span>Lun–Sáb · 6:00 a.m. – 8:00 p.m.</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Chat Sincrónico Integrado -->
+        <div class="live-chat-box">
+            <div class="chat-header-bar">
+                <span><i class="fas fa-circle" style="color:#34d399; font-size:0.55rem; margin-right:6px;"></i> Mesa de Ayuda en Vivo</span>
+                <span style="font-size:0.7rem; color:#a7f3d0;">Conectado</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="msg-bubble bot">
+                    ¡Hola! Soy el asistente técnico de <strong>AgroSabana / ClimateCenter</strong>. Escríbeme si tienes dudas sobre la señal de tu torre, calibración de sensores o alertas de heladas.
+                </div>
+            </div>
+            <div class="chat-input-row">
+                <input type="text" id="chatInput" placeholder="Escribe tu consulta en vivo..." onkeypress="if(event.key==='Enter') enviarMensajeChat()">
+                <button type="button" onclick="enviarMensajeChat()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANAL 2: COMUNICACIÓN ASINCRÓNICA (TICKETS Y CORREO) -->
+    <div class="comm-panel">
+        <div>
+            <span class="comm-badge async"><i class="fas fa-clock"></i> Comunicación Asincrónica · Tickets y Correo</span>
+            <h3 style="margin:0 0 6px; font-size:1.2rem; color:var(--ink-primary);">Radicación de Solicitudes y Diagnóstico Offline</h3>
+            <p style="margin:0 0 14px; font-size:0.85rem; color:var(--ink-secondary); line-height:1.55;">
+                Ideal si estás en una zona de baja señal o deseas solicitar instalación de una nueva torre, mantenimiento preventivo o revisión detallada de tus registros históricos. Te respondemos por correo y WhatsApp apenas sincronices.
+            </p>
+
+            <form id="asyncTicketForm" onsubmit="radicarTicketAsincronico(event)">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <input type="text" id="ticketFarmer" class="form-input" placeholder="Nombre del Agricultor" required>
+                    <input type="text" id="ticketPhone" class="form-input" placeholder="WhatsApp / Celular" required>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <input type="email" id="ticketEmail" class="form-input" placeholder="Correo electrónico" required>
+                    <select id="ticketType" class="form-select">
+                        <option value="Soporte Hardware Torre ESP32">Soporte Hardware Torre ESP32</option>
+                        <option value="Cotización Nueva Torre en Finca">Cotización Nueva Torre en Finca</option>
+                        <option value="Calibración de Alertas / Cultivo">Calibración de Alertas / Cultivo</option>
+                        <option value="Consulta de Conectividad Rural">Consulta de Conectividad Rural</option>
+                    </select>
+                </div>
+
+                <textarea id="ticketDesc" class="form-textarea" rows="4" placeholder="Describe tu solicitud, vereda/municipio y horario preferido para devolverte la llamada o correo..." required></textarea>
+
+                <button type="submit" class="btn-primary-agro" style="background:var(--forest-950);">
+                    <i class="fas fa-ticket-alt"></i> Generar Ticket Asincrónico
+                </button>
+            </form>
+
+            <div class="ticket-confirmation" id="ticketConfirmation"></div>
+        </div>
+
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-light); font-size:0.78rem; color:var(--ink-muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <span><i class="fas fa-envelope"></i> soporte@agrosabana.co</span>
+            <span><i class="fas fa-map-marker-alt"></i> Sabana Centro · Sopó, Cundinamarca</span>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 1. Lógica del Acordeón y Buscador de FAQ
+    let categoriaFAQActual = 'todas';
+
+    function toggleFAQ(btn) {
+        const item = btn.closest('.faq-item');
+        item.classList.toggle('open');
+    }
+
+    function seleccionarCategoriaFAQ(cat, btn) {
+        categoriaFAQActual = cat;
+        document.querySelectorAll('.faq-cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filtrarFAQ();
+    }
+
+    function filtrarFAQ() {
+        const query = document.getElementById('faqSearchInput').value.toLowerCase().trim();
+        document.querySelectorAll('.faq-item').forEach(item => {
+            const cat = item.dataset.cat;
+            const texto = item.textContent.toLowerCase();
+            const coincideCat = categoriaFAQActual === 'todas' || cat === categoriaFAQActual;
+            const coincideTexto = !query || texto.includes(query);
+            item.style.display = (coincideCat && coincideTexto) ? 'block' : 'none';
+        });
+    }
+
+    // 2. Lógica de Calificación por Estrellas y Publicación de Reseñas
+    let totalResenas = 4;
+    let sumaEstrellas = 19.6;
+
+    function fijarEstrellas(valor) {
+        document.getElementById('selectedStars').value = valor;
+        document.querySelectorAll('.star-pick-btn').forEach(btn => {
+            const v = Number(btn.dataset.val);
+            btn.classList.toggle('selected', v <= valor);
+        });
+    }
+
+    function publicarComentario(e) {
+        e.preventDefault();
+        const nombre = document.getElementById('revName').value.trim();
+        const finca = document.getElementById('revFarm').value.trim();
+        const comentario = document.getElementById('revComment').value.trim();
+        const estrellas = Number(document.getElementById('selectedStars').value);
+
+        const iniciales = nombre.split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('') || 'AG';
+        const estrellasTexto = '★'.repeat(estrellas) + '☆'.repeat(5 - estrellas);
+
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        card.innerHTML = `
+            <div class="review-top">
+                <div class="reviewer-badge">
+                    <div class="reviewer-avatar">${iniciales}</div>
+                    <div>
+                        <strong style="font-size:0.88rem; color:var(--ink-primary); display:block;">${nombre}</strong>
+                        <span style="font-size:0.74rem; color:var(--ink-muted);">${finca}</span>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="stars-gold">${estrellasTexto}</div>
+                    <span style="font-size:0.68rem; color:var(--emerald-600); font-weight:700;">Publicado ahora</span>
+                </div>
+            </div>
+            <p style="margin:0; font-size:0.84rem; line-height:1.55; color:var(--ink-secondary);">“${comentario}”</p>
+        `;
+
+        document.getElementById('reviewList').prepend(card);
+
+        totalResenas += 1;
+        sumaEstrellas += estrellas;
+        const nuevoPromedio = (sumaEstrellas / totalResenas).toFixed(1);
+        document.getElementById('avgRatingDisplay').textContent = nuevoPromedio;
+        document.getElementById('totalReviewsCount').textContent = `Basado en ${totalResenas} reseñas verificadas`;
+
+        document.getElementById('reviewForm').reset();
+        fijarEstrellas(5);
+    }
+
+    // 3. Chat Sincrónico Interactivo (Tiempo Real)
+    function enviarMensajeChat() {
+        const input = document.getElementById('chatInput');
+        const texto = input.value.trim();
+        if (!texto) return;
+
+        const box = document.getElementById('chatMessages');
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg-bubble user';
+        userMsg.textContent = texto;
+        box.appendChild(userMsg);
+        input.value = '';
+        box.scrollTop = box.scrollHeight;
+
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'msg-bubble bot';
+            const q = texto.toLowerCase();
+
+            if (q.includes('señal') || q.includes('internet') || q.includes('red')) {
+                botMsg.innerHTML = 'Tu torre guarda hasta <strong>72 horas</strong> en memoria Flash local cuando cae la señal celular y sincroniza automáticamente al volver la red.';
+            } else if (q.includes('helada') || q.includes('frio') || q.includes('frío')) {
+                botMsg.innerHTML = 'Las alertas de helada se calculan localmente en la torre usando punto de rocío y te notifican por Push y WhatsApp <strong>20 minutos antes</strong> del punto crítico.';
+            } else if (q.includes('precio') || q.includes('torre') || q.includes('instalar')) {
+                botMsg.innerHTML = 'Cada torre incluye panel solar, sensores de aire/suelo y tu <strong>App privada</strong>. Puedes dejarnos tus datos en el formulario asincrónico para agendar visita técnica en tu finca.';
+            } else {
+                botMsg.innerHTML = '¡Recibido! Un ingeniero de soporte agronómico está revisando tu consulta en tiempo real. Si deseas seguimiento por llamada, déjanos tu número aquí mismo.';
+            }
+
+            box.appendChild(botMsg);
+            box.scrollTop = box.scrollHeight;
+        }, 550);
+    }
+
+    // 4. Radicación de Ticket Asincrónico
+    function radicarTicketAsincronico(e) {
+        e.preventDefault();
+        const farmer = document.getElementById('ticketFarmer').value.trim();
+        const email = document.getElementById('ticketEmail').value.trim();
+        const tipo = document.getElementById('ticketType').value;
+        const radicado = 'CC-2026-' + Math.floor(1000 + Math.random() * 9000);
+
+        const conf = document.getElementById('ticketConfirmation');
+        conf.style.display = 'block';
+        conf.innerHTML = `
+            <strong><i class="fas fa-check-circle"></i> Ticket Asincrónico Radicado: #${radicado}</strong><br>
+            Gracias, <strong>${farmer}</strong>. Hemos registrado tu solicitud de <em>${tipo}</em>. Recibirás respuesta detallada en <strong>${email}</strong> y vía WhatsApp tan pronto tu dispositivo tenga conexión.
+        `;
+        document.getElementById('asyncTicketForm').reset();
+    }
+</script>
+{% endblock %}
