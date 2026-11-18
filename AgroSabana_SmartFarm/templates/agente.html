@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel del Agente · AgroSabana</title>
+<style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, Segoe UI, Arial, sans-serif; background: #f3f6f4; color: #14231b; }
+    header { background: #0b2a1e; color: #fff; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    header h1 { font-size: 1.05rem; margin: 0; }
+    .tabs button { background: transparent; border: 1px solid #2f6b50; color: #cfe8db; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-left: 6px; }
+    .tabs button.on { background: #10a36b; color: #fff; border-color: #10a36b; }
+    main { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 56px); }
+    #listaConv { background: #fff; border-right: 1px solid #dbe5df; overflow-y: auto; }
+    .conv { padding: 12px 16px; border-bottom: 1px solid #eef3ef; cursor: pointer; display: flex; flex-direction: column; gap: 3px; }
+    .conv:hover { background: #f4faf6; }
+    .conv.activa { background: #e3f6ec; }
+    .conv.espera { border-left: 4px solid #f59e0b; }
+    .conv span { font-size: .85rem; color: #4b5f55; }
+    .conv small { font-size: .72rem; color: #7a8c83; }
+    .vacio { padding: 20px; color: #7a8c83; font-size: .9rem; }
+    #panelChat { display: flex; flex-direction: column; min-width: 0; }
+    #titulo { padding: 12px 18px; background: #fff; border-bottom: 1px solid #dbe5df; font-weight: 700; }
+    #msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .b { max-width: 70%; padding: 9px 13px; border-radius: 12px; font-size: .9rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+    .b.cliente { background: #fff; border: 1px solid #dbe5df; align-self: flex-start; }
+    .b.agente { background: #10a36b; color: #fff; align-self: flex-end; }
+    .b small { display: block; opacity: .65; font-size: .68rem; margin-top: 3px; }
+    .resp { display: flex; gap: 8px; padding: 10px; background: #fff; border-top: 1px solid #dbe5df; }
+    .resp input { flex: 1; padding: 10px 12px; border: 1px solid #cfdcd4; border-radius: 8px; font-size: .9rem; }
+    .resp button { background: #0b2a1e; color: #fff; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    #vistaTickets { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+    .tk { background: #fff; border: 1px solid #dbe5df; border-left: 4px solid #10a36b; border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+    .tk .meta { font-size: .75rem; color: #6a7d73; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .tk .asunto { font-weight: 700; margin: 4px 0; }
+    .tk .cifrado { font-family: monospace; font-size: .72rem; background: #eef3ef; padding: 4px 8px; border-radius: 6px; margin-top: 6px; word-break: break-all; }
+    #login { position: fixed; inset: 0; background: rgba(11,42,30,.92); display: flex; align-items: center; justify-content: center; z-index: 10; }
+    #login div { background: #fff; padding: 26px; border-radius: 14px; width: 340px; }
+    #login input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #cfdcd4; border-radius: 8px; }
+    #login button { width: 100%; padding: 10px; background: #10a36b; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    #loginMsg { color: #b91c1c; font-size: .82rem; min-height: 1em; }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; height: auto; } #listaConv { max-height: 220px; } #panelChat { height: 70vh; } }
+</style>
+</head>
+<body>
+
+<div id="login">
+    <div>
+        <h3 style="margin:0 0 6px;">🔐 Acceso del agente</h3>
+        <p style="margin:0; font-size:.85rem; color:#4b5f55;">Pega el token de administrador (aparece en la consola de Flask o en <code>admin_token.txt</code>).</p>
+        <input type="password" id="tokenInput" placeholder="Token de administrador" onkeypress="if(event.key==='Enter') entrar()">
+        <div id="loginMsg"></div>
+        <button type="button" onclick="entrar()">Entrar</button>
+    </div>
+</div>
+
+<header>
+    <h1>🌱 AgroSabana · Panel del Agente</h1>
+    <div class="tabs">
+        <button type="button" id="tabChat" class="on" onclick="cambiarVista('chat')">💬 Chat en vivo</button>
+        <button type="button" id="tabTickets" onclick="cambiarVista('tickets')">🎫 Tickets (descifrados)</button>
+    </div>
+</header>
+
+<main id="vistaChat">
+    <aside id="listaConv"></aside>
+    <section id="panelChat">
+        <div id="titulo">Selecciona una conversación</div>
+        <div id="msgs"></div>
+        <div class="resp">
+            <input type="text" id="respInput" placeholder="Escribe tu respuesta..." onkeypress="if(event.key==='Enter') responder()">
+            <button type="button" onclick="responder()">Enviar</button>
+        </div>
+    </section>
+</main>
+
+<section id="vistaTickets"></section>
+
+<script>
+let token = sessionStorage.getItem('agro_token') || '';
+let sesionActual = null;
+let ultimoId = 0;
+let sincronizando = false;
+
+function el(tag, cls, txt) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+}
+
+async function api(url, opts = {}) {
+    opts.headers = Object.assign({'X-Admin-Token': token}, opts.headers || {});
+    const r = await fetch(url, opts);
+    if (r.status === 401) {
+        mostrarLogin('Token incorrecto');
+        throw new Error('401');
+    }
+    return r.json();
+}
+
+function mostrarLogin(msg) {
+    document.getElementById('login').style.display = 'flex';
+    document.getElementById('loginMsg').textContent = msg || '';
+}
+
+async function entrar() {
+    token = document.getElementById('tokenInput').value.trim();
+    sessionStorage.setItem('agro_token', token);
+    try {
+        await cargarConversaciones();
+        document.getElementById('login').style.display = 'none';
+    } catch (e) {}
+}
+
+function cambiarVista(v) {
+    document.getElementById('vistaChat').style.display = v === 'chat' ? 'grid' : 'none';
+    document.getElementById('vistaTickets').style.display = v === 'tickets' ? 'block' : 'none';
+    document.getElementById('tabChat').classList.toggle('on', v === 'chat');
+    document.getElementById('tabTickets').classList.toggle('on', v === 'tickets');
+    if (v === 'tickets') cargarTickets();
+}
+
+async function cargarConversaciones() {
+    const lista = await api('/api/chat/conversaciones');
+    const cont = document.getElementById('listaConv');
+    cont.replaceChildren();
+    if (!lista.length) {
+        cont.appendChild(el('p', 'vacio', 'Aún no hay conversaciones.'));
+        return;
+    }
+    lista.forEach(c => {
+        const espera = c.ultimo_emisor === 'cliente';
+        const item = el('div', 'conv' + (c.sesion_id === sesionActual ? ' activa' : '') + (espera ? ' espera' : ''));
+        item.appendChild(el('strong', '', 'Visitante ' + c.sesion_id.slice(0, 6)));
+        item.appendChild(el('span', '', c.ultimo_texto.slice(0, 55)));
+        item.appendChild(el('small', '', c.fecha + (espera ? ' · ⏳ esperando respuesta' : '')));
+        item.onclick = () => abrirConversacion(c.sesion_id);
+        cont.appendChild(item);
+    });
+}
+
+function abrirConversacion(id) {
+    sesionActual = id;
+    ultimoId = 0;
+    document.getElementById('msgs').replaceChildren();
+    document.getElementById('titulo').textContent = 'Conversación con visitante ' + id.slice(0, 6);
+    sincronizar();
+    cargarConversaciones();
+}
+
+async function sincronizar() {
+    if (!sesionActual || sincronizando) return;
+    sincronizando = true;
+    try {
+        const r = await fetch(`/api/chat/mensajes?sesion_id=${sesionActual}&desde=${ultimoId}`);
+        if (!r.ok) return;
+        const msgs = await r.json();
+        const box = document.getElementById('msgs');
+        msgs.forEach(m => {
+            ultimoId = Math.max(ultimoId, m.id);
+            const b = el('div', 'b ' + m.emisor, m.texto);
+            b.appendChild(el('small', '', m.fecha));
+            box.appendChild(b);
+        });
+        if (msgs.length) box.scrollTop = box.scrollHeight;
+    } finally {
+        sincronizando = false;
+    }
+}
+
+async function responder() {
+    const input = document.getElementById('respInput');
+    const texto = input.value.trim();
+    if (!texto || !sesionActual) return;
+    input.value = '';
+    await api('/api/chat/responder', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({sesion_id: sesionActual, mensaje: texto})
+    });
+    sincronizar();
+    cargarConversaciones();
+}
+
+async function cargarTickets() {
+    const tickets = await api('/api/obtener-tickets');
+    const cont = document.getElementById('vistaTickets');
+    cont.replaceChildren();
+    if (!tickets.length) {
+        cont.appendChild(el('p', 'vacio', 'No hay tickets.'));
+        return;
+    }
+    tickets.forEach(t => {
+        const card = el('div', 'tk');
+        const meta = el('div', 'meta');
+        meta.appendChild(el('span', '', `#${t.id} · [${t.canal}] · ${t.nombre} (${t.municipio} - ${t.torre})`));
+        meta.appendChild(el('span', '', t.fecha));
+        card.appendChild(meta);
+        card.appendChild(el('div', 'asunto', t.asunto));
+        card.appendChild(el('div', '', t.mensaje_descifrado));
+        card.appendChild(el('div', 'cifrado', '🔒 ' + t.mensaje_cifrado_sql));
+        cont.appendChild(card);
+    });
+}
+
+setInterval(() => {
+    if (!token) return;
+    cargarConversaciones().catch(() => {});
+    sincronizar();
+}, 2000);
+
+if (token) {
+    cargarConversaciones().then(() => {
+        document.getElementById('login').style.display = 'none';
+    }).catch(() => {});
+}
+</script>
+</body>
+</html>

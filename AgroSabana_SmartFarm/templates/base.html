@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta -charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AgroSabana Centro | Red Agroclimática IoT{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -10,7 +10,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <aside class="sidebar" id="sidebar">
+    <aside class= "sidebar" id="sidebar">
         <div class="brand-header">
             <span class="brand-badge"><i class="fas fa-leaf"></i> Sabana Centro · Cundinamarca</span>
             <div class="brand-title"><i class="fas fa-tractor"></i> AgroSabana</div>
@@ -34,6 +34,7 @@
             <a href="{{ url_for('powerbi') }}" class="{% if active_page == 'powerbi' %}active{% endif %}">
                 <i class="fas fa-database"></i> Analítica Histórica BI
             </a>
+            
         </nav>
 
         <div class="nav-section-label">Sustento Académico</div>
