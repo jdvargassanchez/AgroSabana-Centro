@@ -436,6 +436,10 @@ def powerbi():
 def visualizacion_registros():
     return render_template('visualizacion_registros.html', active_page='visualizacion_registros')
 
+@app.route('/agente')
+def panel_agente():
+    return render_template('agente.html')
+
 # =========================================================================
 # API DE TELEMETRÍA EN TIEMPO REAL
 # =========================================================================
